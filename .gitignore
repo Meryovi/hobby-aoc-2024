@@ -1,0 +1,15 @@
+# General
+**/input/*
+
+# TypeScript
+**/node_modules/*
+**/build/*
+
+# Go
+
+# C#
+**/obj/*
+**/bin/*
+**/BenchmarkDotNet.Artifacts/*
+
+.DS_Store
