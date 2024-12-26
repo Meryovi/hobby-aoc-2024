@@ -1,7 +1,6 @@
 namespace aoc24.Problems;
 
 [MemoryDiagnoser, ShortRunJob]
-[MinColumn, MaxColumn]
 public class Day5Benchmark
 {
     private readonly Day5 problem = new();
