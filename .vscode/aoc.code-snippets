@@ -50,7 +50,6 @@
         "}",
         "",
         "[MemoryDiagnoser, ShortRunJob]",
-        "[MinColumn, MaxColumn]",
         "public class Day${1}Benchmark",
         "{",
         "    private readonly Day${1} problem = new();",
