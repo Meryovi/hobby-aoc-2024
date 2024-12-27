@@ -67,7 +67,7 @@ public readonly record struct FacingPoint(Direction Direction, Point Point)
 
 public readonly ref struct CharMatrix
 {
-    private ReadOnlySpan<char> Matrix { get; init; }
+    private Span<char> Matrix { get; init; }
 
     public int Width { get; init; }
 
@@ -136,6 +136,14 @@ public readonly ref struct CharMatrix
             return null;
 
         return Matrix[(y * Width) + x];
+    }
+
+    public readonly void ReplaceCharAt(int x, int y, char newChar)
+    {
+        if (x >= Width || y >= Height || x < 0 || y < 0)
+            return;
+
+        Matrix[(y * Width) + x] = newChar;
     }
 
     public readonly Point? SeekChar(char character)
