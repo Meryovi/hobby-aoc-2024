@@ -4,16 +4,18 @@ public sealed class Day9 : IProblem<long>
 {
     public long Solve(string input) => CalculateDiskChecksumOptimized(input);
 
+    const int EMPTY_SPACE = -1;
+
     public static long CalculateDiskChecksumOptimized(ReadOnlySpan<char> input)
     {
         // Expand file volume... O.O
-        Span<int> expanded = stackalloc int[95_000];
+        Span<int> expanded = stackalloc int[input.Length * 5];
         int size = 0;
 
         for (int i = 0; i < input.Length; i++)
         {
             int positions = input[i] - '0';
-            int fileId = i % 2 == 0 ? i / 2 : -1;
+            int fileId = i % 2 == 0 ? i / 2 : EMPTY_SPACE;
 
             for (int s = 0; s < positions; s++, size++)
                 expanded[size] = fileId;
@@ -27,13 +29,13 @@ public sealed class Day9 : IProblem<long>
         {
             int value = expanded[head];
 
-            if (IsEmptySpace(value))
+            if (value == EMPTY_SPACE)
             {
                 while (--tail > head)
                 {
                     value = expanded[tail];
 
-                    if (!IsEmptySpace(value))
+                    if (value != EMPTY_SPACE)
                         break;
                 }
             }
@@ -64,13 +66,13 @@ public sealed class Day9 : IProblem<long>
         {
             int value = expanded[head];
 
-            if (IsEmptySpace(value))
+            if (value == EMPTY_SPACE)
             {
                 while (--tail > head)
                 {
                     value = expanded[tail];
 
-                    if (!IsEmptySpace(value))
+                    if (value != EMPTY_SPACE)
                         break;
                 }
             }
@@ -80,6 +82,4 @@ public sealed class Day9 : IProblem<long>
 
         return checksum;
     }
-
-    static bool IsEmptySpace(int number) => number < 0;
 }
