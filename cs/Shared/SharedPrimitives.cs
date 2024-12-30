@@ -8,7 +8,7 @@ public readonly record struct Point(int X, int Y)
         return newPoint.X >= width || newPoint.Y >= height ? null : newPoint;
     }
 
-    public static Point FromDirections(Direction direction)
+    public static Point FromDirection(Direction direction)
     {
         var point = new Point(0, 0);
         if (direction.HasFlag(Direction.Up))
@@ -50,11 +50,11 @@ public readonly record struct FacingPoint(Direction Direction, Point Point)
         return new(Direction, newPoint.Value);
     }
 
-    public FacingPoint MoveForward() => this + Point.FromDirections(Direction);
+    public FacingPoint MoveForward() => this + Point.FromDirection(Direction);
 
     public FacingPoint? MoveForward(int width, int height)
     {
-        var howMuch = Point.FromDirections(Direction);
+        var howMuch = Point.FromDirection(Direction);
         return MoveWithin(howMuch, width, height);
     }
 

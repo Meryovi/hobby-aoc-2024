@@ -50,14 +50,14 @@ public sealed class Day4 : IProblem<int>
 
         ReadOnlySpan<Point> directions =
         [
-            Point.FromDirections(Direction.Right),
-            Point.FromDirections(Direction.Left),
-            Point.FromDirections(Direction.Down),
-            Point.FromDirections(Direction.Up),
-            Point.FromDirections(Direction.Right | Direction.Down),
-            Point.FromDirections(Direction.Right | Direction.Up),
-            Point.FromDirections(Direction.Left | Direction.Down),
-            Point.FromDirections(Direction.Left | Direction.Up),
+            Point.FromDirection(Direction.Right),
+            Point.FromDirection(Direction.Left),
+            Point.FromDirection(Direction.Down),
+            Point.FromDirection(Direction.Up),
+            Point.FromDirection(Direction.Right | Direction.Down),
+            Point.FromDirection(Direction.Right | Direction.Up),
+            Point.FromDirection(Direction.Left | Direction.Down),
+            Point.FromDirection(Direction.Left | Direction.Up),
         ];
 
         int matches = 0;
