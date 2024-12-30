@@ -5,57 +5,23 @@ public static class InputParser
     public static int ParseNumbers<T>(Span<T> numbers, ReadOnlySpan<char> input, params ReadOnlySpan<char> separator)
         where T : INumber<T>
     {
-        Span<Range> ranges = stackalloc Range[numbers.Length];
+        var iterator = input.Split(separator);
+        int size = 0;
 
-        int splitSize = input.Split(ranges, separator);
-        int actualSize = 0;
-
-        for (int i = 0; i < splitSize; i++)
+        while (iterator.MoveNext())
         {
-            var value = input[ranges[i]];
+            ReadOnlySpan<char> value = input[iterator.Current];
 
             if (!value.IsEmpty)
             {
-                numbers[actualSize] = T.Parse(value, null);
-                actualSize++;
+                numbers[size] = T.Parse(value, null);
+                size++;
             }
         }
 
-        return actualSize;
+        return size;
     }
 
-    public static ParsedNumbers<T> ParseNumbers<T>(
-        ref Span<T> numbers,
-        ReadOnlySpan<char> input,
-        int maxSize,
-        ReadOnlySpan<char> separator
-    )
-        where T : INumber<T>
-    {
-        Span<Range> ranges = stackalloc Range[numbers.Length];
-
-        int splitSize = input.Split(ranges, separator);
-        int actualSize = 0;
-
-        for (int i = 0; i < splitSize; i++)
-        {
-            var value = input[ranges[i]];
-
-            if (!value.IsEmpty)
-            {
-                numbers[actualSize] = T.Parse(value, null);
-                actualSize++;
-            }
-        }
-
-        return new ParsedNumbers<T>(ref numbers, actualSize);
-    }
-}
-
-public readonly ref struct ParsedNumbers<T>(ref Span<T> numbers, int actualLength)
-    where T : INumber<T>
-{
-    public ReadOnlySpan<T> Numbers { get; } = numbers;
-
-    public int Length { get; } = actualLength;
+    public static int ParseNumbers<T>(T[] numbers, ReadOnlySpan<char> input, params ReadOnlySpan<char> separator)
+        where T : INumber<T> => ParseNumbers(numbers.AsSpan(), input, separator);
 }
