@@ -29,6 +29,10 @@ public readonly record struct Point(int X, int Y)
     public static Point operator *(Point first, Point other) => new(first.X * other.X, first.Y * other.Y);
 
     public static Point operator *(Point point, int value) => point * new Point(value, value);
+
+    public static bool operator >(Point a, Point b) => a.X > b.X || a.Y > b.Y;
+
+    public static bool operator <(Point a, Point b) => a.X < b.X && a.Y < b.Y;
 }
 
 public readonly record struct FacingPoint(Direction Direction, Point Point)
@@ -117,6 +121,26 @@ public readonly ref struct CharMatrix
         return matrix;
     }
 
+    public static CharMatrix CreateEmpty(int width, int height, Span<char> innerSpan, char? fill = null)
+    {
+        if (innerSpan.Length != width * height)
+            throw new ArgumentException($"Incorrectly sized inner span for matrix, expected size {width * height}");
+
+        if (fill is not null)
+            innerSpan.Fill(fill.Value);
+
+        var matrix = new CharMatrix()
+        {
+            Width = width,
+            Height = height,
+            Matrix = innerSpan
+        };
+        return matrix;
+    }
+
+    public static CharMatrix CreateEmpty(int width, int height, char fill = ' ') =>
+        CreateEmpty(width, height, new char[width * height], fill);
+
     public static int SizeFor(ReadOnlySpan<char> input)
     {
         int width = input.IndexOf(InputReader.NewLine);
@@ -137,6 +161,8 @@ public readonly ref struct CharMatrix
 
         return Matrix[(y * Width) + x];
     }
+
+    public readonly void ReplaceCharAt(Point point, char newChar) => ReplaceCharAt(point.X, point.Y, newChar);
 
     public readonly void ReplaceCharAt(int x, int y, char newChar)
     {
