@@ -1,5 +1,6 @@
 namespace aoc24.Problems;
 
+// https://adventofcode.com/2024/day/6
 public sealed class Day6 : IProblem<int>
 {
     public int Solve(string input) => CountGuardStepsOptimized(input);

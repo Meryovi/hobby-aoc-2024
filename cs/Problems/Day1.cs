@@ -1,5 +1,6 @@
 namespace aoc24.Problems;
 
+// https://adventofcode.com/2024/day/1
 public sealed class Day1 : IProblem<int>
 {
     public int Solve(string input) => DistanceBetweenListsOptimized(input);

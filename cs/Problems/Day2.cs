@@ -1,5 +1,6 @@
 namespace aoc24.Problems;
 
+// https://adventofcode.com/2024/day/2
 public sealed class Day2 : IProblem<int>
 {
     public int Solve(string input) => ComputeSafeReactorReportsOptimized(input);

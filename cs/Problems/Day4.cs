@@ -1,10 +1,11 @@
 namespace aoc24.Problems;
 
+// https://adventofcode.com/2024/day/4
 public sealed class Day4 : IProblem<int>
 {
     public int Solve(string input) => CountXmasOccurrencesOptimized(input);
 
-    public static int CountXmasOccurrencesOptimized(ReadOnlySpan<char> input)
+    private static int CountXmasOccurrencesOptimized(ReadOnlySpan<char> input)
     {
         Span<char> matrixSpan = stackalloc char[CharMatrix.SizeFor(input)];
         var matrix = CharMatrix.CreateFrom(input, matrixSpan);
@@ -23,7 +24,7 @@ public sealed class Day4 : IProblem<int>
         return occurrences;
     }
 
-    public static int CountXmasOccurrences(string input)
+    private static int CountXmasOccurrences(string input)
     {
         // The only difference is that this version of "CreateFrom" will allocate a backing array for the matrix,
         // as opposed to the other one which will use the provided and stack allocated structure...

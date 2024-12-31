@@ -1,5 +1,6 @@
 namespace aoc24.Problems;
 
+// https://adventofcode.com/2024/day/10
 public sealed class Day10 : IProblem<int>
 {
     public int Solve(string input) => CountTrailHeadScoresOptimized(input);

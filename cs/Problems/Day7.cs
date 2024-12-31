@@ -1,10 +1,11 @@
 namespace aoc24.Problems;
 
+// https://adventofcode.com/2024/day/7
 public sealed class Day7 : IProblem<long>
 {
     public long Solve(string input) => CalculateCalibrationValuesOptimized(input);
 
-    public static long CalculateCalibrationValuesOptimized(ReadOnlySpan<char> input)
+    private static long CalculateCalibrationValuesOptimized(ReadOnlySpan<char> input)
     {
         long totalCalibration = 0;
 
@@ -25,7 +26,7 @@ public sealed class Day7 : IProblem<long>
         return totalCalibration;
     }
 
-    public static long CalculateCalibrationValues(string input)
+    private static long CalculateCalibrationValues(string input)
     {
         long totalCalibration = 0;
 
@@ -42,7 +43,13 @@ public sealed class Day7 : IProblem<long>
         return totalCalibration;
     }
 
-    public static bool OperatorsEqualTestValue(long testValue, long currentValue, ReadOnlySpan<long> numbers, int length, int inx)
+    private static bool OperatorsEqualTestValue(
+        long testValue,
+        long currentValue,
+        ReadOnlySpan<long> numbers,
+        int length,
+        int inx
+    )
     {
         if (currentValue > testValue) // If current exceeds test value, it will never match.
             return false;

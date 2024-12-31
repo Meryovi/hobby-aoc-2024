@@ -10,9 +10,9 @@ var assembly = typeof(Program).Assembly;
 
 Console.WriteLine("Number of the problem day to benchmark? (defaults to all)");
 
-if (int.TryParse(Console.ReadLine(), out int testToRun))
+if (int.TryParse(args.FirstOrDefault() ?? Console.ReadLine(), out int testToRun))
 {
-    // A specific one
+    // A specific benchmark
     var matchingBench = assembly.GetTypes().Where(t => t.Name.StartsWith($"Day{testToRun}Bench")).FirstOrDefault();
     if (matchingBench is not null)
     {

@@ -1,12 +1,13 @@
 namespace aoc24.Problems;
 
+// https://adventofcode.com/2024/day/9
 public sealed class Day9 : IProblem<long>
 {
     public long Solve(string input) => CalculateDiskChecksumOptimized(input);
 
     const int EMPTY_SPACE = -1;
 
-    public static long CalculateDiskChecksumOptimized(ReadOnlySpan<char> input)
+    private static long CalculateDiskChecksumOptimized(ReadOnlySpan<char> input)
     {
         // Expand file volume... O.O
         Span<int> expanded = stackalloc int[input.Length * 5];
@@ -46,7 +47,7 @@ public sealed class Day9 : IProblem<long>
         return checksum;
     }
 
-    public static long CalculateDiskChecksum(string input)
+    private static long CalculateDiskChecksum(string input)
     {
         var expanded = new List<int>();
 

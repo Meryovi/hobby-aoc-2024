@@ -1,5 +1,6 @@
 namespace aoc24.Problems;
 
+// https://adventofcode.com/2024/day/5
 public sealed class Day5 : IProblem<int>
 {
     public int Solve(string input) => SumMiddlePageNumbersOptimized(input);
@@ -46,7 +47,7 @@ public sealed class Day5 : IProblem<int>
         return middleDigitSum;
     }
 
-    public static int SumMiddlePageNumbers(string input)
+    private static int SumMiddlePageNumbers(string input)
     {
         var split = input.Split(InputReader.NewLine + InputReader.NewLine);
         var pageOrdering = split[0].Split(InputReader.NewLine);

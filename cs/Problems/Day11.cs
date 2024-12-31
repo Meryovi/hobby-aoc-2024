@@ -2,13 +2,16 @@ using System.Buffers;
 
 namespace aoc24.Problems;
 
+// https://adventofcode.com/2024/day/11
 public sealed class Day11 : IProblem<int>
 {
     public int Solve(string input) => BlinkAndCountStonesOptimized(input);
 
-    private static readonly ArrayPool<long> bank = ArrayPool<long>.Shared;
+    private readonly ArrayPool<long> bank = ArrayPool<long>.Shared;
 
-    public static int BlinkAndCountStonesOptimized(ReadOnlySpan<char> input)
+    private readonly Dictionary<long, (long, long?)> stonesCache = [];
+
+    private int BlinkAndCountStonesOptimized(ReadOnlySpan<char> input)
     {
         // We need a huge chunk of longs in order to be able to process this exponentially growing array.
         // For that end, we use an array 'rented' from an array pool.
@@ -41,7 +44,7 @@ public sealed class Day11 : IProblem<int>
         }
     }
 
-    public static int BlinkAndCountStones(string input)
+    private int BlinkAndCountStones(string input)
     {
         var numbers = input.Split(' ').Select(long.Parse).ToList();
 
@@ -61,8 +64,11 @@ public sealed class Day11 : IProblem<int>
         return numbers.Count;
     }
 
-    private static (long, long?) ApplyBlinkingRules(long number)
+    private (long Updated, long? Created) ApplyBlinkingRules(long number)
     {
+        if (stonesCache.TryGetValue(number, out var cachedStone))
+            return cachedStone;
+
         if (number == 0)
             return (1, null);
 
@@ -72,10 +78,11 @@ public sealed class Day11 : IProblem<int>
             return (number * 2024, null);
 
         int powerHalf = (int)Math.Pow(10, length / 2);
-        long firstHalf = number / powerHalf;
-        long secondHalf = number % powerHalf;
+        var stoneTuple = (number / powerHalf, number % powerHalf);
 
-        return (firstHalf, secondHalf);
+        stonesCache.Add(number, stoneTuple);
+
+        return stoneTuple;
     }
 
     private static int GetNumberLength(long number) => number == 0 ? 1 : (int)Math.Floor(Math.Log10(number)) + 1;

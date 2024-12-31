@@ -2,11 +2,12 @@ using System.Text.RegularExpressions;
 
 namespace aoc24.Problems;
 
+// https://adventofcode.com/2024/day/3
 public sealed partial class Day3 : IProblem<int>
 {
     public int Solve(string input) => SumCorruptedCalculationOptimized(input);
 
-    public static int SumCorruptedCalculationOptimized(ReadOnlySpan<char> input)
+    private static int SumCorruptedCalculationOptimized(ReadOnlySpan<char> input)
     {
         int sum = 0;
 
@@ -29,7 +30,7 @@ public sealed partial class Day3 : IProblem<int>
         return sum;
     }
 
-    public static int SumCorruptedCalculation(string input)
+    private static int SumCorruptedCalculation(string input)
     {
         var matches = MultExpressionRegex.Matches(input);
         int sum = 0;
