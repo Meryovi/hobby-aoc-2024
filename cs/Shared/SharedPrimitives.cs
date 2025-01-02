@@ -22,6 +22,16 @@ public readonly record struct Point(int X, int Y)
         return point;
     }
 
+    public static Point FromString(ReadOnlySpan<char> pointString)
+    {
+        int sepInx = pointString.IndexOf(',');
+        int x = int.Parse(pointString[..sepInx]);
+        int y = int.Parse(pointString[(sepInx + 1)..]);
+        return new(x, y);
+    }
+
+    public bool IsBetween(Point start, Point end) => X >= start.X && X <= end.X && Y >= start.Y && Y <= end.Y;
+
     public static Point operator +(Point first, Point other) => new(first.X + other.X, first.Y + other.Y);
 
     public static Point operator -(Point first, Point other) => new(first.X - other.X, first.Y - other.Y);
@@ -61,6 +71,24 @@ public readonly record struct FacingPoint(Direction Direction, Point Point)
         var howMuch = Point.FromDirection(Direction);
         return MoveWithin(howMuch, width, height);
     }
+
+    public readonly FacingPoint Rotate(Direction relativeDirection) =>
+        (Direction, relativeDirection) switch
+        {
+            (Direction.Right, Direction.Right) => new(Direction.Down, Point),
+            (Direction.Right, Direction.Left) => new(Direction.Up, Point),
+            (Direction.Right, Direction.Down) => new(Direction.Left, Point),
+            (Direction.Left, Direction.Right) => new(Direction.Up, Point),
+            (Direction.Left, Direction.Left) => new(Direction.Down, Point),
+            (Direction.Left, Direction.Down) => new(Direction.Right, Point),
+            (Direction.Down, Direction.Right) => new(Direction.Left, Point),
+            (Direction.Down, Direction.Left) => new(Direction.Right, Point),
+            (Direction.Down, Direction.Down) => new(Direction.Up, Point),
+            (Direction.Up, Direction.Right) => new(Direction.Right, Point),
+            (Direction.Up, Direction.Left) => new(Direction.Left, Point),
+            (Direction.Up, Direction.Down) => new(Direction.Down, Point),
+            _ => this
+        };
 
     public static FacingPoint operator +(FacingPoint first, Point other) =>
         new(first.Direction, first.X + other.X, first.Y + other.Y);
@@ -188,12 +216,13 @@ public readonly ref struct CharMatrix
         builder.AppendLine($"{{Width: {Width}, Height: {Height}}}");
         for (int i = 0; i < Matrix.Length; i++)
         {
-            if (i % Height == 0)
+            if (i % Width == 0)
                 builder.AppendLine();
 
             builder.Append(Matrix[i]).Append(' ');
         }
-        return builder.ToString();
+        var result = builder.ToString();
+        return result;
     }
 }
 
