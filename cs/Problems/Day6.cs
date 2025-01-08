@@ -9,18 +9,18 @@ public sealed class Day6 : IProblem<int>
 
     public int CountGuardStepsOptimized(ReadOnlySpan<char> input)
     {
-        Span<char> inner = stackalloc char[CharMatrix.SizeFor(input)];
-        var matrix = CharMatrix.CreateFrom(input, inner);
+        Span<char> inner = stackalloc char[Matrix<char>.SizeFor(input)];
+        var matrix = Matrix<char>.CreateFrom(input, inner);
         history.Clear();
 
-        var start = matrix.SeekChar('^').GetValueOrDefault();
+        var start = matrix.SeekItem('^').GetValueOrDefault();
         var current = new FacingPoint(Direction.Up, start);
         history.Add(start);
 
         while (true)
         {
-            var nextPosition = current.MoveForward();
-            var nextChar = matrix.CharAt(nextPosition.X, nextPosition.Y);
+            var next = current.MoveForward();
+            var nextChar = matrix.ItemAt(next.Position);
 
             if (nextChar is null) // Went out of bounds.
                 break;
@@ -31,8 +31,8 @@ public sealed class Day6 : IProblem<int>
                 continue;
             }
 
-            current = nextPosition;
-            history.Add(current.Point);
+            current = next;
+            history.Add(current.Position);
         }
 
         return history.Count;

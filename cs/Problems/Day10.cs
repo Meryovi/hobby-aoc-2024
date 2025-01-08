@@ -9,8 +9,8 @@ public sealed class Day10 : IProblem<int>
 
     public int CountTrailHeadScoresOptimized(ReadOnlySpan<char> input)
     {
-        Span<char> inner = stackalloc char[CharMatrix.SizeFor(input)];
-        var matrix = CharMatrix.CreateFrom(input, inner);
+        Span<char> inner = stackalloc char[Matrix<char>.SizeFor(input)];
+        var matrix = Matrix<char>.CreateFrom(input, inner);
 
         paths.Clear();
 
@@ -27,14 +27,14 @@ public sealed class Day10 : IProblem<int>
     }
 
     private static void BuildTrailHeadPaths(
-        CharMatrix matrix,
+        Matrix<char> matrix,
         Point start,
         Point current,
         HashSet<(Point, Point)> paths,
         int expected = 0
     )
     {
-        int value = matrix.CharAt(current) is char curr ? curr - '0' : int.MinValue;
+        int value = matrix.ItemAt(current) is char curr ? curr - '0' : int.MinValue;
 
         if (value != expected)
             return;

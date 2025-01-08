@@ -45,23 +45,19 @@ public readonly record struct Point(int X, int Y)
     public static bool operator <(Point a, Point b) => a.X < b.X && a.Y < b.Y;
 }
 
-public readonly record struct FacingPoint(Direction Direction, Point Point)
+public readonly record struct FacingPoint(Direction Direction, Point Position)
 {
-    public int X => Point.X;
-
-    public int Y => Point.Y;
-
     public FacingPoint(Direction Direction, int X, int Y)
         : this(Direction, new(X, Y)) { }
 
     public FacingPoint? MoveWithin(Point howMuch, int width, int height)
     {
-        var newPoint = Point.MoveWithin(howMuch, width, height);
+        var newPosition = Position.MoveWithin(howMuch, width, height);
 
-        if (newPoint is null)
+        if (newPosition is null)
             return null;
 
-        return new(Direction, newPoint.Value);
+        return new(Direction, newPosition.Value);
     }
 
     public FacingPoint MoveForward() => this + Point.FromDirection(Direction);
@@ -75,43 +71,44 @@ public readonly record struct FacingPoint(Direction Direction, Point Point)
     public readonly FacingPoint Rotate(Direction relativeDirection) =>
         (Direction, relativeDirection) switch
         {
-            (Direction.Right, Direction.Right) => new(Direction.Down, Point),
-            (Direction.Right, Direction.Left) => new(Direction.Up, Point),
-            (Direction.Right, Direction.Down) => new(Direction.Left, Point),
-            (Direction.Left, Direction.Right) => new(Direction.Up, Point),
-            (Direction.Left, Direction.Left) => new(Direction.Down, Point),
-            (Direction.Left, Direction.Down) => new(Direction.Right, Point),
-            (Direction.Down, Direction.Right) => new(Direction.Left, Point),
-            (Direction.Down, Direction.Left) => new(Direction.Right, Point),
-            (Direction.Down, Direction.Down) => new(Direction.Up, Point),
-            (Direction.Up, Direction.Right) => new(Direction.Right, Point),
-            (Direction.Up, Direction.Left) => new(Direction.Left, Point),
-            (Direction.Up, Direction.Down) => new(Direction.Down, Point),
+            (Direction.Right, Direction.Right) => new(Direction.Down, Position),
+            (Direction.Right, Direction.Left) => new(Direction.Up, Position),
+            (Direction.Right, Direction.Down) => new(Direction.Left, Position),
+            (Direction.Left, Direction.Right) => new(Direction.Up, Position),
+            (Direction.Left, Direction.Left) => new(Direction.Down, Position),
+            (Direction.Left, Direction.Down) => new(Direction.Right, Position),
+            (Direction.Down, Direction.Right) => new(Direction.Left, Position),
+            (Direction.Down, Direction.Left) => new(Direction.Right, Position),
+            (Direction.Down, Direction.Down) => new(Direction.Up, Position),
+            (Direction.Up, Direction.Right) => new(Direction.Right, Position),
+            (Direction.Up, Direction.Left) => new(Direction.Left, Position),
+            (Direction.Up, Direction.Down) => new(Direction.Down, Position),
             _ => this
         };
 
     public static FacingPoint operator +(FacingPoint first, Point other) =>
-        new(first.Direction, first.X + other.X, first.Y + other.Y);
+        new(first.Direction, first.Position.X + other.X, first.Position.Y + other.Y);
 
     public static FacingPoint operator -(FacingPoint first, Point other) =>
-        new(first.Direction, first.X - other.X, first.Y - other.Y);
+        new(first.Direction, first.Position.X - other.X, first.Position.Y - other.Y);
 }
 
-public readonly ref struct CharMatrix
+public readonly ref struct Matrix<T>
+    where T : struct
 {
-    private Span<char> Matrix { get; init; }
+    private Span<T> Inner { get; init; }
 
     public int Width { get; init; }
 
     public int Height { get; init; }
 
-    public static CharMatrix CreateFrom(ReadOnlySpan<char> input)
+    public static Matrix<char> CreateFrom(ReadOnlySpan<char> input)
     {
         var inner = new char[SizeFor(input)];
         return CreateFrom(input, inner);
     }
 
-    public static CharMatrix CreateFrom(ReadOnlySpan<char> input, Span<char> innerSpan)
+    public static Matrix<char> CreateFrom(ReadOnlySpan<char> input, Span<char> innerSpan)
     {
         int width = input.IndexOf(InputReader.NewLine);
 
@@ -123,11 +120,11 @@ public readonly ref struct CharMatrix
         if (innerSpan.Length != width * height)
             throw new ArgumentException($"Incorrectly sized inner span for matrix, expected size {width * height}");
 
-        var matrix = new CharMatrix()
+        var matrix = new Matrix<char>()
         {
             Width = width,
             Height = height,
-            Matrix = innerSpan
+            Inner = innerSpan
         };
 
         var enumerator = input.Split(InputReader.NewLine);
@@ -149,7 +146,7 @@ public readonly ref struct CharMatrix
         return matrix;
     }
 
-    public static CharMatrix CreateEmpty(int width, int height, Span<char> innerSpan, char? fill = null)
+    public static Matrix<T> CreateEmpty(int width, int height, Span<T> innerSpan, T? fill = null)
     {
         if (innerSpan.Length != width * height)
             throw new ArgumentException($"Incorrectly sized inner span for matrix, expected size {width * height}");
@@ -157,17 +154,17 @@ public readonly ref struct CharMatrix
         if (fill is not null)
             innerSpan.Fill(fill.Value);
 
-        var matrix = new CharMatrix()
+        var matrix = new Matrix<T>()
         {
             Width = width,
             Height = height,
-            Matrix = innerSpan
+            Inner = innerSpan
         };
         return matrix;
     }
 
-    public static CharMatrix CreateEmpty(int width, int height, char fill = ' ') =>
-        CreateEmpty(width, height, new char[width * height], fill);
+    public static Matrix<T> CreateEmpty(int width, int height, T fill = default) =>
+        CreateEmpty(width, height, new T[width * height], fill);
 
     public static int SizeFor(ReadOnlySpan<char> input)
     {
@@ -180,46 +177,45 @@ public readonly ref struct CharMatrix
         return width * height;
     }
 
-    public readonly char? CharAt(Point point) => CharAt(point.X, point.Y);
+    public readonly T? ItemAt(Point position) => ItemAt(position.X, position.Y);
 
-    public readonly char? CharAt(int x, int y)
+    public readonly T? ItemAt(int x, int y)
     {
         if (x >= Width || y >= Height || x < 0 || y < 0)
             return null;
 
-        return Matrix[(y * Width) + x];
+        return Inner[(y * Width) + x];
     }
 
-    public readonly void ReplaceCharAt(Point point, char newChar) => ReplaceCharAt(point.X, point.Y, newChar);
+    public readonly void ReplaceAt(Point position, T newItem) => ReplaceAt(position.X, position.Y, newItem);
 
-    public readonly void ReplaceCharAt(int x, int y, char newChar)
+    public readonly void ReplaceAt(int x, int y, T newItem)
     {
         if (x >= Width || y >= Height || x < 0 || y < 0)
             return;
 
-        Matrix[(y * Width) + x] = newChar;
+        Inner[(y * Width) + x] = newItem;
     }
 
-    public readonly Point? SeekChar(char character)
+    public readonly Point? SeekItem(T item)
     {
-        var inx = Matrix.IndexOf(character);
+        for (int inx = 0; inx < Inner.Length; inx++)
+            if (Inner[inx].GetHashCode() == item.GetHashCode())
+                return new(inx % Width, inx / Width);
 
-        if (inx == -1)
-            return null;
-
-        return new(inx % Width, inx / Width);
+        return null;
     }
 
     public override string ToString()
     {
         var builder = new System.Text.StringBuilder();
         builder.AppendLine($"{{Width: {Width}, Height: {Height}}}");
-        for (int i = 0; i < Matrix.Length; i++)
+        for (int i = 0; i < Inner.Length; i++)
         {
             if (i % Width == 0)
                 builder.AppendLine();
 
-            builder.Append(Matrix[i]).Append(' ');
+            builder.Append(Inner[i]).Append(' ');
         }
         var result = builder.ToString();
         return result;

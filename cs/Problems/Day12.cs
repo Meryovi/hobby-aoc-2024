@@ -7,11 +7,11 @@ public sealed class Day12 : IProblem<int>
 
     private static int CalculateFencingPriceOptimized(ReadOnlySpan<char> input)
     {
-        Span<char> innerMatrix = stackalloc char[CharMatrix.SizeFor(input)];
-        Span<char> innerHistory = stackalloc char[innerMatrix.Length];
+        Span<char> innerMatrix = stackalloc char[Matrix<char>.SizeFor(input)];
+        Span<bool> innerHistory = stackalloc bool[innerMatrix.Length];
 
-        var matrix = CharMatrix.CreateFrom(input, innerMatrix);
-        var history = CharMatrix.CreateEmpty(matrix.Width, matrix.Height, innerHistory, '0');
+        var matrix = Matrix<char>.CreateFrom(input, innerMatrix);
+        var history = Matrix<bool>.CreateEmpty(matrix.Width, matrix.Height, innerHistory, false);
 
         int totalPrice = 0;
 
@@ -26,8 +26,8 @@ public sealed class Day12 : IProblem<int>
     {
         // The only difference is the backing memory store for the char matrix.
         // In this case we are using arrays, so there is some allocation involved.
-        var matrix = CharMatrix.CreateFrom(input);
-        var history = CharMatrix.CreateEmpty(matrix.Width, matrix.Height, '0');
+        var matrix = Matrix<char>.CreateFrom(input);
+        var history = Matrix<bool>.CreateEmpty(matrix.Width, matrix.Height, false);
 
         int totalPrice = 0;
 
@@ -38,21 +38,21 @@ public sealed class Day12 : IProblem<int>
         return totalPrice;
     }
 
-    private static Garden ScanGarden(CharMatrix matrix, CharMatrix history, Point location)
+    private static Garden ScanGarden(Matrix<char> matrix, Matrix<bool> history, Point location)
     {
-        var type = matrix.CharAt(location)!.Value;
+        var type = matrix.ItemAt(location)!.Value;
 
-        if (history.CharAt(location) == '1') // Already visited. Short-circuit.
+        if (history.ItemAt(location) == true) // Already visited. Short-circuit.
             return new(type);
 
         var region = new Garden(type);
 
         ScanGardenPerimeter(matrix, history, location);
 
-        void ScanGardenPerimeter(CharMatrix matrix, CharMatrix history, Point location)
+        void ScanGardenPerimeter(Matrix<char> matrix, Matrix<bool> history, Point location)
         {
-            var type = matrix.CharAt(location);
-            bool wasVisited = history.CharAt(location) == '1';
+            var type = matrix.ItemAt(location);
+            bool wasVisited = history.ItemAt(location) == true;
 
             if (type != region.Type)
             {
@@ -63,7 +63,7 @@ public sealed class Day12 : IProblem<int>
             if (wasVisited || type is null)
                 return;
 
-            history.ReplaceCharAt(location, '1');
+            history.ReplaceAt(location, true);
             region.Area++;
 
             foreach (var direction in NavigableDirections)

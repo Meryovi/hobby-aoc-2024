@@ -13,9 +13,10 @@ public sealed class Day15 : IProblem<int>
         var map = input[sections[0]];
         var instructions = input[sections[1]];
 
-        Span<char> inner = stackalloc char[CharMatrix.SizeFor(map)];
-        var matrix = CharMatrix.CreateFrom(map, inner);
-        var robot = matrix.SeekChar('@')!.Value;
+        Span<char> inner = stackalloc char[Matrix<char>.SizeFor(map)];
+        var matrix = Matrix<char>.CreateFrom(map, inner);
+
+        var robot = matrix.SeekItem('@')!.Value;
 
         foreach (var instruction in instructions)
         {
@@ -23,46 +24,46 @@ public sealed class Day15 : IProblem<int>
                 continue;
 
             var direction = InstructionDirectionMap[instruction];
-            robot = MoveItemInMatrix(robot, matrix, direction);
+            robot = MoveRobotInMatrix(robot, matrix, direction);
         }
 
         int gpsCoordsSum = 0;
 
         for (int y = 0; y < matrix.Height; y++)
         for (int x = 0; x < matrix.Width; x++)
-            gpsCoordsSum += matrix.CharAt(x, y) == 'O' ? y * 100 + x : 0;
+            gpsCoordsSum += matrix.ItemAt(x, y) == 'O' ? y * 100 + x : 0;
 
         return gpsCoordsSum;
     }
 
-    private static Point MoveItemInMatrix(Point current, CharMatrix matrix, Point direction)
+    private static Point MoveRobotInMatrix(Point robot, Matrix<char> matrix, Point direction)
     {
-        var next = current + direction;
-        var nextChar = matrix.CharAt(next);
+        var next = robot + direction;
+        var nextChar = matrix.ItemAt(next);
 
         if (nextChar is null or '#')
-            return current;
+            return robot;
 
         if (nextChar == 'O')
         {
-            var nextNext = MoveItemInMatrix(next, matrix, direction);
+            var nextNext = MoveRobotInMatrix(next, matrix, direction);
 
             if (nextNext == next)
-                return current;
+                return robot;
         }
 
-        SwapElements(matrix, current, next);
+        SwapElements(matrix, robot, next);
 
         return next;
     }
 
-    private static void SwapElements(CharMatrix matrix, Point pointA, Point pointB)
+    private static void SwapElements(Matrix<char> matrix, Point pointA, Point pointB)
     {
-        var charA = matrix.CharAt(pointA)!.Value;
-        var charB = matrix.CharAt(pointB)!.Value;
+        var charA = matrix.ItemAt(pointA)!.Value;
+        var charB = matrix.ItemAt(pointB)!.Value;
 
-        matrix.ReplaceCharAt(pointA, charB);
-        matrix.ReplaceCharAt(pointB, charA);
+        matrix.ReplaceAt(pointA, charB);
+        matrix.ReplaceAt(pointB, charA);
     }
 
     private static readonly Dictionary<char, Point> InstructionDirectionMap =

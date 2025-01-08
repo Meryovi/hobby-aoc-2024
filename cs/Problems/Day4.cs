@@ -7,8 +7,8 @@ public sealed class Day4 : IProblem<int>
 
     private static int CountXmasOccurrencesOptimized(ReadOnlySpan<char> input)
     {
-        Span<char> matrixSpan = stackalloc char[CharMatrix.SizeFor(input)];
-        var matrix = CharMatrix.CreateFrom(input, matrixSpan);
+        Span<char> inner = stackalloc char[Matrix<char>.SizeFor(input)];
+        var matrix = Matrix<char>.CreateFrom(input, inner);
 
         int occurrences = 0;
 
@@ -28,7 +28,7 @@ public sealed class Day4 : IProblem<int>
     {
         // The only difference is that this version of "CreateFrom" will allocate a backing array for the matrix,
         // as opposed to the other one which will use the provided and stack allocated structure...
-        var matrix = CharMatrix.CreateFrom(input);
+        var matrix = Matrix<char>.CreateFrom(input);
 
         int occurrences = 0;
 
@@ -44,9 +44,9 @@ public sealed class Day4 : IProblem<int>
         return occurrences;
     }
 
-    private static int FindWordMatches(CharMatrix matrix, Point starting, ReadOnlySpan<char> chars)
+    private static int FindWordMatches(Matrix<char> matrix, Point starting, ReadOnlySpan<char> chars)
     {
-        if (matrix.CharAt(starting) != chars[0])
+        if (matrix.ItemAt(starting) != chars[0])
             return 0;
 
         ReadOnlySpan<Point> directions =
@@ -68,7 +68,7 @@ public sealed class Day4 : IProblem<int>
             var current = starting;
             for (int i = 0; i < chars.Length; i++)
             {
-                char? currChar = matrix.CharAt(current);
+                char? currChar = matrix.ItemAt(current);
 
                 // No match or out of matrix bounds.
                 if (currChar != chars[i])

@@ -11,8 +11,8 @@ public sealed class Day8 : IProblem<int>
 
     public int CalculateAntiNodesOptimized(ReadOnlySpan<char> input)
     {
-        Span<char> inner = stackalloc char[CharMatrix.SizeFor(input)];
-        var matrix = CharMatrix.CreateFrom(input, inner);
+        Span<char> inner = stackalloc char[Matrix<char>.SizeFor(input)];
+        var matrix = Matrix<char>.CreateFrom(input, inner);
 
         antennaGroups.Clear();
         antiNodes.Clear();
@@ -24,7 +24,7 @@ public sealed class Day8 : IProblem<int>
             {
                 var location = new Point(x, y);
 
-                if (matrix.CharAt(location) is char val and not '.')
+                if (matrix.ItemAt(location) is char val and not '.')
                 {
                     if (!antennaGroups.ContainsKey(val))
                         antennaGroups[val] = [];
@@ -47,10 +47,10 @@ public sealed class Day8 : IProblem<int>
                     var antiNodeA = antennaA + distance;
                     var antiNodeB = antennaB - distance;
 
-                    if (matrix.CharAt(antiNodeA) is not null)
+                    if (matrix.ItemAt(antiNodeA) is not null)
                         antiNodes.Add(antiNodeA);
 
-                    if (matrix.CharAt(antiNodeB) is not null)
+                    if (matrix.ItemAt(antiNodeB) is not null)
                         antiNodes.Add(antiNodeB);
                 }
             }

@@ -9,14 +9,14 @@ public sealed class Day16 : IProblem<int>
 
     private int CountReindeerStepsScoreOptimized(ReadOnlySpan<char> input)
     {
-        Span<char> innerMatrix = stackalloc char[CharMatrix.SizeFor(input)];
-        var matrix = CharMatrix.CreateFrom(input, innerMatrix);
+        Span<char> innerMatrix = stackalloc char[Matrix<char>.SizeFor(input)];
+        var matrix = Matrix<char>.CreateFrom(input, innerMatrix);
 
-        Span<char> innerHistory = stackalloc char[innerMatrix.Length];
-        var history = CharMatrix.CreateEmpty(matrix.Width, matrix.Height, innerHistory, '0');
+        Span<Direction> innerHistory = stackalloc Direction[innerMatrix.Length];
+        var history = Matrix<Direction>.CreateEmpty(matrix.Width, matrix.Height, innerHistory, default);
 
-        var start = matrix.SeekChar('S')!.Value;
-        var goal = matrix.SeekChar('E')!.Value;
+        var start = matrix.SeekItem('S')!.Value;
+        var goal = matrix.SeekItem('E')!.Value;
         var first = new FacingPoint(Direction.Right, start);
 
         queue.Clear();
@@ -24,7 +24,7 @@ public sealed class Day16 : IProblem<int>
 
         while (queue.TryDequeue(out var reindeer, out var points))
         {
-            if (reindeer.Point == goal)
+            if (reindeer.Position == goal)
                 return points;
 
             var forward = reindeer.MoveForward();
@@ -36,9 +36,9 @@ public sealed class Day16 : IProblem<int>
             TryEnqueue(matrix, history, leftTurn, points + 1000);
         }
 
-        void TryEnqueue(CharMatrix matrix, CharMatrix history, FacingPoint point, int points)
+        void TryEnqueue(Matrix<char> matrix, Matrix<Direction> history, FacingPoint point, int points)
         {
-            if (IsInHistory(history, point) || matrix.CharAt(point.Point) is not ('.' or 'S' or 'E'))
+            if (IsInHistory(history, point) || matrix.ItemAt(point.Position) is not ('.' or 'S' or 'E'))
                 return;
 
             queue.Enqueue(point, points);
@@ -47,19 +47,17 @@ public sealed class Day16 : IProblem<int>
 
         // Just for fun, use a char matrix as a bitmask table encoding the visited directions
         // Could still have used a HashSet, but this is effectively 0 alloc.
-        static bool IsInHistory(CharMatrix history, FacingPoint point)
+        static bool IsInHistory(Matrix<Direction> history, FacingPoint point)
         {
-            var currentChar = history.CharAt(point.Point)!.Value;
-            var directions = (Direction)(currentChar - '0');
+            var directions = history.ItemAt(point.Position)!.Value;
             return directions.HasFlag(point.Direction);
         }
 
-        static void AddToHistory(CharMatrix history, FacingPoint point)
+        static void AddToHistory(Matrix<Direction> history, FacingPoint point)
         {
-            var currentChar = history.CharAt(point.Point)!.Value;
-            var directions = (Direction)(currentChar - '0') | point.Direction; // Add the new direction
-            var newChar = (char)(directions + '0');
-            history.ReplaceCharAt(point.Point, newChar);
+            var currentDirs = history.ItemAt(point.Position)!.Value;
+            var directions = currentDirs | point.Direction; // Add the new direction
+            history.ReplaceAt(point.Position, directions);
         }
 
         return 0;
@@ -67,11 +65,11 @@ public sealed class Day16 : IProblem<int>
 
     private int CountReindeerStepsScore(ReadOnlySpan<char> input)
     {
-        var matrix = CharMatrix.CreateFrom(input);
+        var matrix = Matrix<char>.CreateFrom(input);
         var history = new HashSet<FacingPoint>();
 
-        var start = matrix.SeekChar('S')!.Value;
-        var goal = matrix.SeekChar('E')!.Value;
+        var start = matrix.SeekItem('S')!.Value;
+        var goal = matrix.SeekItem('E')!.Value;
         var first = new FacingPoint(Direction.Right, start);
 
         queue.Clear();
@@ -79,7 +77,7 @@ public sealed class Day16 : IProblem<int>
 
         while (queue.TryDequeue(out var reindeer, out var points))
         {
-            if (reindeer.Point == goal)
+            if (reindeer.Position == goal)
                 return points;
 
             var forward = reindeer.MoveForward();
@@ -91,9 +89,9 @@ public sealed class Day16 : IProblem<int>
             TryEnqueue(matrix, leftTurn, points + 1000);
         }
 
-        void TryEnqueue(CharMatrix matrix, FacingPoint point, int points)
+        void TryEnqueue(Matrix<char> matrix, FacingPoint point, int points)
         {
-            if (history.Contains(point) || matrix.CharAt(point.Point) is not ('.' or 'S' or 'E'))
+            if (history.Contains(point) || matrix.ItemAt(point.Position) is not ('.' or 'S' or 'E'))
                 return;
 
             queue.Enqueue(point, points);
