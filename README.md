@@ -8,7 +8,7 @@ I've set individual objectives for each language, aligning with my current profi
 
 ### Structure:
 
--   **C#:** I've challenged myself to write solutions that aim for minimal heap allocations while maintaining readability. It's certainly a delicate balance!
+-   **C#:** I've challenged myself to write solutions that aim for minimal heap allocations while maintaining readability and reasonable performance. It's certainly a delicate balance!
 
 -   **Go:** My goal with Go solutions is to utilize idiomatic constructs and achieve decent performance. I'm keen on exploring the elegance of Go in this context.
 
