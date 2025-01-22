@@ -2,6 +2,8 @@ namespace aoc24.Shared;
 
 public readonly record struct Point(int X, int Y)
 {
+    public static readonly Point Zero = new();
+
     public Point? MoveWithin(Point howMuch, int width, int height)
     {
         var newPoint = this + howMuch;
