@@ -199,6 +199,8 @@ public readonly ref struct Matrix<T>
         Inner[(y * Width) + x] = newItem;
     }
 
+    public readonly Span<T> Row(int y) => Inner.Slice(y * Width, Width);
+
     public readonly Point? SeekItem(T item)
     {
         for (int inx = 0; inx < Inner.Length; inx++)
