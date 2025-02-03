@@ -27,7 +27,7 @@ public sealed class Day4 : IProblem<int>
     private static int CountXmasOccurrences(string input)
     {
         // The only difference is that this version of "CreateFrom" will allocate a backing array for the matrix,
-        // as opposed to the other one which will use the provided and stack allocated structure...
+        // as opposed to the other one which will use the provided Span<char>...
         var matrix = Matrix<char>.CreateFrom(input);
 
         int occurrences = 0;

@@ -59,7 +59,7 @@ public sealed class Day20 : IProblem<int>
                     cheatStart = location.Position;
                 }
 
-                if (cheatStart is not null && cheatEnd is null) // If the cheat was started, end it on the next step.
+                if (cheatStart is not null && cheatEnd is null) // If the cheat was started, end it in the next step.
                     cheatEnd = location.Position;
 
                 var nextStep = new RaceStep(location, cheatStart, cheatEnd);

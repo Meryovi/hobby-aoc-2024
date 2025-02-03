@@ -34,29 +34,4 @@ public sealed class Day1 : IProblem<int>
 
         return distance;
     }
-
-    private static int DistanceBetweenLists(string input)
-    {
-        var lines = input.Split(InputReader.NewLine);
-
-        Span<int> left = stackalloc int[lines.Length];
-        Span<int> right = stackalloc int[lines.Length];
-
-        for (int i = 0; i < lines.Length; i++)
-        {
-            int inx = lines[i].IndexOf("   ");
-            left[i] = int.Parse(lines[i][0..inx]);
-            right[i] = int.Parse(lines[i][(inx + 3)..]);
-        }
-
-        MemoryExtensions.Sort(left);
-        MemoryExtensions.Sort(right);
-
-        int distance = 0;
-
-        for (int i = 0; i < lines.Length; i++)
-            distance += Math.Abs(left[i] - right[i]);
-
-        return distance;
-    }
 }

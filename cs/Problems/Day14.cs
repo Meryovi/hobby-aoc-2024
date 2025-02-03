@@ -49,7 +49,7 @@ public sealed class Day14 : IProblem<int>
 
     private static (QuadrantBounds, QuadrantBounds, QuadrantBounds, QuadrantBounds) BuildQuadrantMap(int width, int height)
     {
-        // These quadrants are kinda confusing... but we have to skip the middle row and column.
+        // These quadrants are kinda confusing... we have to skip the middle row and column of the matrix.
         QuadrantBounds q1 = (new(0, 0), new(width / 2 - 1, height / 2 - 1));
         QuadrantBounds q2 = (new(width / 2 + 1, 0), new(width, height / 2 - 1));
         QuadrantBounds q3 = (new(0, height / 2 + 1), new(width / 2 - 1, height));

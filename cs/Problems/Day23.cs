@@ -98,8 +98,8 @@ public sealed class Day23 : IProblem<int>
         }
     }
 
-    // I decided to build a network of the hash codes instead to avoid string handling.
-    // Since we're guaranteed 2 char strings, there's no collision risk.
+    // I decided to build a network of hash codes instead to avoid string handling.
+    // Since we're guaranteed to have 2 char strings, there's no collision risk.
     public readonly record struct Node(int Hash, bool IsTarget)
     {
         public static Node Parse(ReadOnlySpan<char> nodeString, char startsWith) =>
